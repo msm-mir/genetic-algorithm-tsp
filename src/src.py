@@ -25,6 +25,20 @@ def distance_of_cities(cities):
     distance_matrix = [[dis(c1, c2) for c2 in cities] for c1 in cities]
     return distance_matrix
 
+# compute the fitness function of a chromosome
+def fitness_function(distance_matrix, chromosome):
+    l = 0
+    n = len(chromosome)
+
+    for i in range(n):
+        first_city = chromosome[i]
+        sec_city = chromosome[(i + 1) % n]
+        
+        l += distance_matrix[first_city][sec_city]
+    
+    return 1 / l
+
+random.seed(42)
 
 # generate inputs (coordinate of the cities)
 n_cities = 100

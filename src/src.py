@@ -61,6 +61,41 @@ def tournament_selection(pop, dis_mx, tourn_size=3):
     # return the best parent chosen by tournament
     return pop[selected_idx]
 
+# order crossover to generate children
+def crossover_ox(parent1, parent2):
+    n = len(parent1)
+
+    # generate two random cut points for the parents
+    cut1 = random.randint(0, n - 2)
+    cut2 = random.randint(cut1 + 1, n - 1)
+
+    # fill the children with -1 initial values of parent size
+    child1 = [-1 for _ in range(n)]
+    child2 = [-1 for _ in range(n)]
+
+    # copy the middle section of the parents to the children
+    child1[cut1:cut2] = parent2[cut1:cut2]
+    child2[cut1:cut2] = parent1[cut1:cut2]
+
+    # collect the remaining genes from each parent starting at cut2 and wrapping around
+    remaining_genes1 = parent1[cut2:] + parent1[:cut2]
+    remaining_genes2 = parent2[cut2:] + parent2[:cut2]
+
+    # remove genes already present in each child's middle section
+    remaining_genes1 = [g for g in remaining_genes1 if g not in child1]
+    remaining_genes2 = [g for g in remaining_genes2 if g not in child2]
+
+    # target indices in the child to fill: start at cut2, continue to end, then wrap to start
+    target_indices = list(range(cut2, n)) + list(range(0, cut2))
+
+    # fill the remaining indices in each child with the remaining genes
+    for i in range(len(remaining_genes1)):
+        idx = target_indices[i]
+        child1[idx] = remaining_genes1[i]
+        child2[idx] = remaining_genes2[i]
+    
+    return child1, child2
+
 
 random.seed(42)
 

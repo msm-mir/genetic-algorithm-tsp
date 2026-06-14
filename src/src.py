@@ -26,7 +26,7 @@ def distance_of_cities(cities):
     return distance_matrix
 
 # compute the fitness function of a chromosome
-def fitness_function(distance_matrix, chromosome):
+def fitness_function(dis_mx, chromosome):
     l = 0
     n = len(chromosome)
 
@@ -34,9 +34,29 @@ def fitness_function(distance_matrix, chromosome):
         first_city = chromosome[i]
         sec_city = chromosome[(i + 1) % n]
         
-        l += distance_matrix[first_city][sec_city]
+        l += dis_mx[first_city][sec_city]
     
     return 1 / l
+
+# tournament selection to generate a parent
+def tournament_selection(pop, dis_mx, tourn_size=3):
+    # store fitness score of each chromosome in the population
+    fitness_scores = [fitness_function(dis_mx, p) for p in pop]
+    # store best score to pass it directly to the next generation
+    max_score = max(fitness_scores)
+    best_score_idx = fitness_scores.index(max_score)
+    
+    # remove the best score index from the selection pool
+    available_idx = list(set(range(len(pop))) - {best_score_idx})
+    # randomly select chromosomes for the tournament
+    selected_tourn = random.sample(available_idx, tourn_size)
+
+    # find the index of the tournament participant with the highest fitness score
+    selected_idx = max(selected_tourn, key=lambda t: fitness_scores[t])
+
+    # return the best parent chosen by tournament
+    return pop[selected_idx]
+
 
 random.seed(42)
 
@@ -45,7 +65,9 @@ n_cities = 100
 cities = generate_cities(n_cities)
 
 # euclidean distance for city pairs
-distance_matrix = distance_of_cities(cities)
+dis_mx = distance_of_cities(cities)
 
 # generate initial population
-init_pop = [random.sample(range(n_cities), n_cities) for _ in range(n_cities)]
+pop_size = 100
+init_pop = [random.sample(range(n_cities), n_cities) for _ in range(pop_size)]
+

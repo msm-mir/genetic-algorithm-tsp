@@ -1,5 +1,6 @@
 import random
 import math
+import matplotlib.pyplot as plt
 
 # generate coordinate (x, y) of n cities
 def generate_cities(n):
@@ -40,7 +41,7 @@ def fitness_function(dis_mx, chromosome):
         total_distance += dis_mx[first_city][sec_city]
     
     # aim of the algorithm is to maximize fitness
-    return 1 / total_distance
+    return 1.0 / float(total_distance)
 
 # tournament selection to generate a parent
 def tournament_selection(pop, fitness_scores, best_score_idx, tourn_size=3):
@@ -55,40 +56,35 @@ def tournament_selection(pop, fitness_scores, best_score_idx, tourn_size=3):
     # return the best parent chosen by tournament
     return pop[selected_idx]
 
-# order crossover to generate children
-def crossover_ox(parent1, parent2):
+# order crossover to generate the child
+def order_crossover(parent1, parent2):
     n = len(parent1)
 
     # generate two random cut points for the parents
     cut1 = random.randint(0, n - 2)
     cut2 = random.randint(cut1 + 1, n - 1)
 
-    # fill the children with -1 initial values of parent size
-    child1 = [-1 for _ in range(n)]
-    child2 = [-1 for _ in range(n)]
+    # fill the child with -1 initial values of parent size
+    child = [-1 for _ in range(n)]
 
-    # copy the middle section of the parents to the children
-    child1[cut1:cut2] = parent2[cut1:cut2]
-    child2[cut1:cut2] = parent1[cut1:cut2]
+    # copy the middle section of the parent to the child
+    child[cut1:cut2] = parent2[cut1:cut2]
 
-    # collect the remaining genes from each parent starting at cut2 and wrapping around
-    remaining_genes1 = parent1[cut2:] + parent1[:cut2]
-    remaining_genes2 = parent2[cut2:] + parent2[:cut2]
+    # collect the remaining genes from parent starting at cut2 and wrapping around
+    remaining_genes = parent1[cut2:] + parent1[:cut2]
 
-    # remove genes already present in each child's middle section
-    remaining_genes1 = [g for g in remaining_genes1 if g not in child1]
-    remaining_genes2 = [g for g in remaining_genes2 if g not in child2]
+    # remove genes already present in child's middle section
+    remaining_genes = [g for g in remaining_genes if g not in child]
 
     # target indices in the child to fill: start at cut2, continue to end, then wrap to start
     target_indices = list(range(cut2, n)) + list(range(0, cut2))
 
-    # fill the remaining indices in each child with the remaining genes
-    for i in range(len(remaining_genes1)):
+    # fill the remaining indices in the child with the remaining genes
+    for i in range(len(remaining_genes)):
         idx = target_indices[i]
-        child1[idx] = remaining_genes1[i]
-        child2[idx] = remaining_genes2[i]
+        child[idx] = remaining_genes[i]
     
-    return child1, child2
+    return child
 
 # inversion mutation for a chromosome
 def mutation_inversion(chromosome):
@@ -122,7 +118,7 @@ population = list(init_pop)
 n_generations = 200
 mutation_rate = 0.05 # 5%
 
-for generation in n_generations:
+for generation in range(n_generations):
     # store fitness score of each chromosome in the population
     fitness_scores = [fitness_function(dis_mx, p) for p in population]
     # store best score to pass it directly to the next generation
@@ -141,7 +137,8 @@ for generation in n_generations:
         )
 
         # produce children using order crossover
-        child1, child2 = crossover_ox(parent1, parent2)
+        child1 = order_crossover(parent1, parent2)
+        child2 = order_crossover(parent2, parent1)
 
         # apply inversion mutation to the first child based on the mutation rate
         if random.random() < mutation_rate:

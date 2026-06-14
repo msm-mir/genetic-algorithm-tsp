@@ -3,9 +3,11 @@ import math
 
 # generate coordinate (x, y) of n cities
 def generate_cities(n):
+    # use a set to avoid duplicate coordinates
     cities_set = set()
 
     while len(cities_set) < n:
+        # use uniform to generate float coordinate
         x = random.uniform(0, 100)
         y = random.uniform(0, 100)
 

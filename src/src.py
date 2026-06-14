@@ -27,16 +27,18 @@ def distance_of_cities(cities):
 
 # compute the fitness function of a chromosome
 def fitness_function(dis_mx, chromosome):
-    l = 0
+    total_distance = 0
     n = len(chromosome)
 
+    # sum the distances between cities sequentially in the chromosome
     for i in range(n):
         first_city = chromosome[i]
-        sec_city = chromosome[(i + 1) % n]
+        sec_city = chromosome[(i + 1) % n] # for distance between the last city and the first city
         
-        l += dis_mx[first_city][sec_city]
+        total_distance += dis_mx[first_city][sec_city]
     
-    return 1 / l
+    # aim of the algorithm is to maximize fitness
+    return 1 / total_distance
 
 # tournament selection to generate a parent
 def tournament_selection(pop, dis_mx, tourn_size=3):

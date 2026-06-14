@@ -101,6 +101,20 @@ def mutation_inversion(chromosome):
     
     return mutated_chr
 
+# visualize the convergence by plotting the best distance across generations
+def convergence_plot(history):
+    plt.figure(figsize=(10, 6))
+    plt.plot(history, color="violet", linewidth=2, label="Best Distance")
+
+    plt.title("Genetic Algorithm Convergence for TSP", fontsize=14, fontweight="bold")
+    plt.xlabel("Generation", fontsize=12)
+    plt.ylabel("Total Distance", fontsize=12)
+    plt.grid(True, linestyle="--", alpha=0.6)
+    plt.legend()
+
+    plt.show()
+
+
 random.seed(42)
 
 # generate inputs (coordinate of the cities)
@@ -117,6 +131,7 @@ init_pop = [random.sample(range(n_cities), n_cities) for _ in range(pop_size)]
 population = list(init_pop)
 n_generations = 200
 mutation_rate = 0.05 # 5%
+best_distance_history = []
 
 for generation in range(n_generations):
     # store fitness score of each chromosome in the population
@@ -124,6 +139,9 @@ for generation in range(n_generations):
     # store best score to pass it directly to the next generation
     max_score = max(fitness_scores)
     best_score_idx = fitness_scores.index(max_score)
+
+    # for convergence plot
+    best_distance_history.append(1.0 / float(max_score))
 
     # create new population for the next generation
     new_pop = []
@@ -153,3 +171,5 @@ for generation in range(n_generations):
         new_pop.append(child2)
     
     population = new_pop
+
+convergence_plot(best_distance_history)

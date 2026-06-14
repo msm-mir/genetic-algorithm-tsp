@@ -1,5 +1,6 @@
 import random
 import math
+import time
 import matplotlib.pyplot as plt
 
 # generate coordinate (x, y) of n cities
@@ -152,20 +153,22 @@ def plot_best_route(cities, best_tour):
 random.seed(42)
 
 # generate inputs (coordinate of the cities)
-n_cities = 100
+n_cities = 50
 cities = generate_cities(n_cities)
 
 # euclidean distance for city pairs
 dis_mx = distance_of_cities(cities)
 
 # generate initial population
-pop_size = 100
+pop_size = 500
 init_pop = [random.sample(range(n_cities), n_cities) for _ in range(pop_size)]
 
 population = list(init_pop)
-n_generations = 200
+n_generations = 800
 mutation_rate = 0.05 # 5%
 best_distance_history = []
+
+start_time = time.time()
 
 for generation in range(n_generations):
     # store fitness score of each chromosome in the population
@@ -207,6 +210,9 @@ for generation in range(n_generations):
         new_pop.append(child2)
     
     population = new_pop
+
+exec_time = time.time() - start_time
+print(f'\nexecution time: {exec_time:.3f}\n\n')
 
 convergence_plot(best_distance_history)
 plot_best_route(cities, best_tour)

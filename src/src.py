@@ -43,13 +43,7 @@ def fitness_function(dis_mx, chromosome):
     return 1 / total_distance
 
 # tournament selection to generate a parent
-def tournament_selection(pop, dis_mx, tourn_size=3):
-    # store fitness score of each chromosome in the population
-    fitness_scores = [fitness_function(dis_mx, p) for p in pop]
-    # store best score to pass it directly to the next generation
-    max_score = max(fitness_scores)
-    best_score_idx = fitness_scores.index(max_score)
-    
+def tournament_selection(pop, fitness_scores, best_score_idx, tourn_size=3):
     # remove the best score index from the selection pool
     available_idx = list(set(range(len(pop))) - {best_score_idx})
     # randomly select chromosomes for the tournament
@@ -124,3 +118,41 @@ dis_mx = distance_of_cities(cities)
 pop_size = 100
 init_pop = [random.sample(range(n_cities), n_cities) for _ in range(pop_size)]
 
+population = list(init_pop)
+n_generations = 200
+mutation_rate = 0.05 # 5%
+
+for generation in n_generations:
+    # store fitness score of each chromosome in the population
+    fitness_scores = [fitness_function(dis_mx, p) for p in population]
+    # store best score to pass it directly to the next generation
+    max_score = max(fitness_scores)
+    best_score_idx = fitness_scores.index(max_score)
+
+    # create new population for the next generation
+    new_pop = []
+    new_pop.append(population[best_score_idx]) # add best chromosome to the new population
+
+    while len(new_pop) < pop_size:
+        # generate parents using tournament selection
+        parent1, parent2 = (
+            tournament_selection(population, fitness_scores, best_score_idx) 
+            for _ in range(2)
+        )
+
+        # produce children using order crossover
+        child1, child2 = crossover_ox(parent1, parent2)
+
+        # apply inversion mutation to the first child based on the mutation rate
+        if random.random() < mutation_rate:
+            child1 = mutation_inversion(child1)
+        
+        # apply inversion mutation to the second child based on the mutation rate
+        if random.random() < mutation_rate:
+            child2 = mutation_inversion(child2)
+
+        # add children to the new population
+        new_pop.append(child1)
+        new_pop.append(child2)
+    
+    population = new_pop

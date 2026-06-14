@@ -96,6 +96,20 @@ def crossover_ox(parent1, parent2):
     
     return child1, child2
 
+# inversion mutation for a chromosome
+def mutation_inversion(chromosome):
+    n = len(chromosome)
+
+    # generate two random cut points for the inversion mutation
+    cut1 = random.randint(0, n - 2)
+    cut2 = random.randint(cut1 + 1, n - 1)
+
+    c = list(chromosome)
+
+    # copy the chromosome with its middle section inverted
+    mutated_chr = c[:cut1] + c[cut1:cut2][::-1] + c[cut2:]
+    
+    return mutated_chr
 
 random.seed(42)
 

@@ -32,3 +32,6 @@ cities = generate_cities(n_cities)
 
 # euclidean distance for city pairs
 distance_matrix = distance_of_cities(cities)
+
+# generate initial population
+init_pop = [random.sample(range(n_cities), n_cities) for _ in range(n_cities)]

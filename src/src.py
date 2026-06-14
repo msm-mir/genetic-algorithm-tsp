@@ -114,6 +114,40 @@ def convergence_plot(history):
 
     plt.show()
 
+# plotting the best route
+def plot_best_route(cities, best_tour):
+    closed_tour = best_tour + [best_tour[0]]
+
+    x = [cities[tour_idx][0] for tour_idx in closed_tour]
+    y = [cities[tour_idx][1] for tour_idx in closed_tour]
+
+    plt.figure(figsize=(8, 8))
+
+    plt.plot(x, y, color="violet", linestyle="-", linewidth=2, marker="o")
+
+    plt.scatter(
+        [c[0] for c in cities],
+        [c[1] for c in cities],
+        color="black",
+        s=30,
+        zorder=5,
+    )
+
+    plt.scatter(
+        cities[best_tour[0]][0],
+        cities[best_tour[0]][1],
+        color="green",
+        s=50,
+        label="Start City",
+        zorder=6,
+    )
+
+    plt.title("Best Found TSP Route", fontsize=14, fontweight="bold")
+    plt.xlabel("X Coordinate")
+    plt.ylabel("Y Coordinate")
+    plt.grid(True, linestyle=":", alpha=0.6)
+    plt.legend()
+    plt.show()
 
 random.seed(42)
 
@@ -142,6 +176,8 @@ for generation in range(n_generations):
 
     # for convergence plot
     best_distance_history.append(1.0 / float(max_score))
+    # for graphical route
+    best_tour = population[best_score_idx]
 
     # create new population for the next generation
     new_pop = []
@@ -173,3 +209,4 @@ for generation in range(n_generations):
     population = new_pop
 
 convergence_plot(best_distance_history)
+plot_best_route(cities, best_tour)

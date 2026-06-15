@@ -12,10 +12,10 @@ class GA:
         self.best_distance_history = []
         
         # generate inputs (coordinate of the cities)
-        self.cities = self.generate_cities(n_cities)
+        self.cities = self.generate_cities(self.n_cities)
 
         # euclidean distance for city pairs
-        self.dis_mx = distance_of_cities(self.cities)
+        self.dis_mx = self.distance_of_cities()
 
         # generate initial population
         self.population = [random.sample(range(n_cities), n_cities) for _ in range(pop_size)]
@@ -34,17 +34,17 @@ class GA:
         
         return list(cities_set)
 
-# calculate distance matrix for all pairs of cities
-def distance_of_cities(cities):
-    # euclidean distance
-    def dis(c1, c2):
-        x1, y1 = c1
-        x2, y2 = c2
-        return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+    # calculate distance matrix for all pairs of cities
+    def distance_of_cities(self):
+        # euclidean distance
+        def dis(c1, c2):
+            x1, y1 = c1
+            x2, y2 = c2
+            return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
-    # n*n distance matrix
-    distance_matrix = [[dis(c1, c2) for c2 in cities] for c1 in cities]
-    return distance_matrix
+        # n*n distance matrix
+        distance_matrix = [[dis(c1, c2) for c2 in self.cities] for c1 in self.cities]
+        return distance_matrix
 
 # compute the fitness function of a chromosome
 def fitness_function(dis_mx, chromosome):

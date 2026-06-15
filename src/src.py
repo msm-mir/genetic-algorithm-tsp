@@ -226,16 +226,13 @@ def plot_best_route(cities, best_tour):
 # generate coordinate of the cities
 cities = generate_cities(n_cities=50)
 
-pop_size = 500
-n_generations = 800
-mutation_rate = 0.05 # 5%
+my_model = GA(cities, pop_size=500, n_generations=800, mutation_rate=0.05)
 
 start_time = time.time()
-
-
-
+my_model.fit()
 exec_time = time.time() - start_time
-print(f'\nexecution time: {exec_time:.3f}\n\n')
 
-# convergence_plot(best_distance_history)
-# plot_best_route(cities, best_tour)
+print(f'\n execution time: {exec_time:.3f}\n\n')
+
+convergence_plot(my_model.best_distance_history)
+plot_best_route(cities, my_model.best_tour)

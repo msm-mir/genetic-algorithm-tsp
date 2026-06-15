@@ -12,7 +12,7 @@ class GA:
         self.best_distance_history = []
         
         # generate inputs (coordinate of the cities)
-        self.cities = self.generate_cities(self.n_cities)
+        self.cities = self.generate_cities()
 
         # euclidean distance for city pairs
         self.dis_mx = self.distance_of_cities()
@@ -21,11 +21,11 @@ class GA:
         self.population = [random.sample(range(n_cities), n_cities) for _ in range(pop_size)]
 
     # generate coordinate (x, y) of n cities
-    def generate_cities(self, n):
+    def generate_cities(self):
         # use a set to avoid duplicate coordinates
         cities_set = set()
 
-        while len(cities_set) < n:
+        while len(cities_set) < self.n_cities:
             # use uniform to generate float coordinate
             x = random.uniform(0, 100)
             y = random.uniform(0, 100)

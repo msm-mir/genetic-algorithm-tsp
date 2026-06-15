@@ -49,7 +49,8 @@ class GA:
     # generate the initial population of chromosomes
     def generate_init_pop(self):
         return [
-            random.sample(range(self.n_cities), self.n_cities) 
+            # each chromosome is a random permutation of all city indices
+            random.sample(range(self.n_cities), self.n_cities)
             for _ in range(self.pop_size)
         ]
     

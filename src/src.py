@@ -3,6 +3,24 @@ import math
 import time
 import matplotlib.pyplot as plt
 
+class GA:
+    def __init__(self, n_cities, pop_size, n_generations, mutation_rate):
+        self.n_cities = n_cities
+        self.pop_size = pop_size
+        self.n_generations = n_generations
+        self.mutation_rate = mutation_rate
+        self.best_distance_history = []
+        
+        # generate inputs (coordinate of the cities)
+        self.cities = generate_cities(n_cities)
+
+        # euclidean distance for city pairs
+        self.dis_mx = distance_of_cities(self.cities)
+
+        # generate initial population
+        self.population = [random.sample(range(n_cities), n_cities) for _ in range(pop_size)]
+
+
 # generate coordinate (x, y) of n cities
 def generate_cities(n):
     # use a set to avoid duplicate coordinates
@@ -152,21 +170,10 @@ def plot_best_route(cities, best_tour):
 
 random.seed(42)
 
-# generate inputs (coordinate of the cities)
 n_cities = 50
-cities = generate_cities(n_cities)
-
-# euclidean distance for city pairs
-dis_mx = distance_of_cities(cities)
-
-# generate initial population
 pop_size = 500
-init_pop = [random.sample(range(n_cities), n_cities) for _ in range(pop_size)]
-
-population = list(init_pop)
 n_generations = 800
 mutation_rate = 0.05 # 5%
-best_distance_history = []
 
 start_time = time.time()
 

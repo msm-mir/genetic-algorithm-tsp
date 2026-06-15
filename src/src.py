@@ -9,11 +9,14 @@ class GA:
         self.pop_size = pop_size
         self.n_generations = n_generations
         self.mutation_rate = mutation_rate
+
+        self.best_distance = float('inf')
         self.best_distance_history = []
+        self.best_tour = None
         
         random.seed(42)
 
-        # generate inputs (coordinate of the cities)
+        # generate coordinate of the cities
         self.cities = self.generate_cities()
 
         # euclidean distance for city pairs
@@ -129,6 +132,49 @@ class GA:
         
         return mutated_chr
 
+    # performs selection, crossover, and mutation over multiple generations
+    def fit(self):
+        for g in range(self.n_generations):
+            # store fitness score of each chromosome in the population
+            fitness_scores = [self.cal_fitness(self.dis_mx, p) for p in self.population]
+            # store best score to pass it directly to the next generation
+            max_score = max(fitness_scores)
+            best_score_idx = fitness_scores.index(max_score)
+            best_chromosome = self.population[best_score_idx]
+
+            # for convergence plot
+            current_best_dis = 1.0 / max_score
+            self.best_distance_history.append()
+
+            if current_best_dis < self.best_distance:
+                self.best_distance = current_best_dis
+                self.best_tour = best_chromosome
+
+            # create new population for the next generation
+            new_pop = [best_chromosome]
+
+            while len(new_pop) < self.pop_size:
+                # generate parents using tournament selection
+                parent1 = self.tournament_selection(fitness_scores, best_score_idx) 
+                parent2 = self.tournament_selection(fitness_scores, best_score_idx) 
+
+                # produce children using order crossover
+                child1 = self.order_crossover(parent1, parent2)
+                child2 = self.order_crossover(parent2, parent1)
+
+                # apply inversion mutation to children based on the mutation rate
+                if random.random() < self.mutation_rate:
+                    child1 = self.inversion_mutation(child1)
+                if random.random() < self.mutation_rate:
+                    child2 = self.inversion_mutation(child2)
+
+                # add children to the new population
+                new_pop.append(child1)
+                new_pop.append(child2)
+            
+            self.population = new_pop
+
+
 # visualize the convergence by plotting the best distance across generations
 def convergence_plot(history):
     plt.figure(figsize=(8, 4))
@@ -185,49 +231,10 @@ mutation_rate = 0.05 # 5%
 
 start_time = time.time()
 
-for generation in range(n_generations):
-    # store fitness score of each chromosome in the population
-    fitness_scores = [fitness_function(dis_mx, p) for p in population]
-    # store best score to pass it directly to the next generation
-    max_score = max(fitness_scores)
-    best_score_idx = fitness_scores.index(max_score)
 
-    # for convergence plot
-    best_distance_history.append(1.0 / float(max_score))
-    # for graphical route
-    best_tour = population[best_score_idx]
-
-    # create new population for the next generation
-    new_pop = []
-    new_pop.append(population[best_score_idx]) # add best chromosome to the new population
-
-    while len(new_pop) < pop_size:
-        # generate parents using tournament selection
-        parent1, parent2 = (
-            tournament_selection(population, fitness_scores, best_score_idx) 
-            for _ in range(2)
-        )
-
-        # produce children using order crossover
-        child1 = order_crossover(parent1, parent2)
-        child2 = order_crossover(parent2, parent1)
-
-        # apply inversion mutation to the first child based on the mutation rate
-        if random.random() < mutation_rate:
-            child1 = mutation_inversion(child1)
-        
-        # apply inversion mutation to the second child based on the mutation rate
-        if random.random() < mutation_rate:
-            child2 = mutation_inversion(child2)
-
-        # add children to the new population
-        new_pop.append(child1)
-        new_pop.append(child2)
-    
-    population = new_pop
 
 exec_time = time.time() - start_time
 print(f'\nexecution time: {exec_time:.3f}\n\n')
 
-convergence_plot(best_distance_history)
-plot_best_route(cities, best_tour)
+# convergence_plot(best_distance_history)
+# plot_best_route(cities, best_tour)

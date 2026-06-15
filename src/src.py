@@ -18,7 +18,7 @@ class GA:
         self.dis_mx = self.distance_of_cities()
 
         # generate initial population
-        self.population = [random.sample(range(n_cities), n_cities) for _ in range(pop_size)]
+        self.population = self.generate_init_pop()
 
     # generate coordinate (x, y) of n cities
     def generate_cities(self):
@@ -45,7 +45,14 @@ class GA:
         # n*n distance matrix
         distance_matrix = [[dis(c1, c2) for c2 in self.cities] for c1 in self.cities]
         return distance_matrix
-
+    
+    # generate the initial population of chromosomes
+    def generate_init_pop(self):
+        return [
+            random.sample(range(self.n_cities), self.n_cities) 
+            for _ in range(self.pop_size)
+        ]
+    
 # compute the fitness function of a chromosome
 def fitness_function(dis_mx, chromosome):
     total_distance = 0

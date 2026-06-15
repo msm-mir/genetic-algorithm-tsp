@@ -69,18 +69,18 @@ class GA:
         # aim of the algorithm is to maximize fitness
         return 1.0 / total_distance
 
-# tournament selection to generate a parent
-def tournament_selection(pop, fitness_scores, best_score_idx, tourn_size=3):
-    # remove the best score index from the selection pool
-    available_idx = list(set(range(len(pop))) - {best_score_idx})
-    # randomly select chromosomes for the tournament
-    selected_tourn = random.sample(available_idx, tourn_size)
+    # tournament selection to generate a parent
+    def tournament_selection(self, fitness_scores, best_score_idx, tourn_size=3):
+        # remove the best score index from the selection pool
+        available_idx = list(set(range(len(self.population))) - {best_score_idx})
+        # randomly select chromosomes for the tournament
+        selected_tourn = random.sample(available_idx, tourn_size)
 
-    # find the index of the tournament participant with the highest fitness score
-    selected_idx = max(selected_tourn, key=lambda t: fitness_scores[t])
+        # find the index of the tournament participant with the highest fitness score
+        selected_idx = max(selected_tourn, key=lambda t: fitness_scores[t])
 
-    # return the best parent chosen by tournament
-    return pop[selected_idx]
+        # return the best parent chosen by tournament
+        return self.population[selected_idx]
 
 # order crossover to generate the child
 def order_crossover(parent1, parent2):

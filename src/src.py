@@ -4,8 +4,9 @@ import time
 import matplotlib.pyplot as plt
 
 class GA:
-    def __init__(self, n_cities, pop_size, n_generations, mutation_rate):
-        self.n_cities = n_cities
+    def __init__(self, cities, pop_size, n_generations, mutation_rate):
+        self.cities = cities
+        self.n_cities = len(self.cities)
         self.pop_size = pop_size
         self.n_generations = n_generations
         self.mutation_rate = mutation_rate
@@ -16,28 +17,11 @@ class GA:
         
         random.seed(42)
 
-        # generate coordinate of the cities
-        self.cities = self.generate_cities()
-
         # euclidean distance for city pairs
         self.dis_mx = self.distance_of_cities()
 
         # generate initial population
         self.population = self.generate_init_pop()
-
-    # generate coordinate (x, y) of n cities
-    def generate_cities(self):
-        # use a set to avoid duplicate coordinates
-        cities_set = set()
-
-        while len(cities_set) < self.n_cities:
-            # use uniform to generate float coordinate
-            x = random.uniform(0, 100)
-            y = random.uniform(0, 100)
-
-            cities_set.add((x, y))
-        
-        return list(cities_set)
 
     # calculate distance matrix for all pairs of cities
     def distance_of_cities(self):
@@ -175,6 +159,20 @@ class GA:
             self.population = new_pop
 
 
+# generate coordinate (x, y) of n cities
+def generate_cities(n_cities):
+    # use a set to avoid duplicate coordinates
+    cities_set = set()
+
+    while len(cities_set) < n_cities:
+        # use uniform to generate float coordinate
+        x = random.uniform(0, 100)
+        y = random.uniform(0, 100)
+
+        cities_set.add((x, y))
+    
+    return list(cities_set)
+
 # visualize the convergence by plotting the best distance across generations
 def convergence_plot(history):
     plt.figure(figsize=(8, 4))
@@ -224,7 +222,9 @@ def plot_best_route(cities, best_tour):
     plt.show()
 
 
-n_cities = 50
+# generate coordinate of the cities
+cities = generate_cities(n_cities=50)
+
 pop_size = 500
 n_generations = 800
 mutation_rate = 0.05 # 5%

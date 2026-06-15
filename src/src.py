@@ -89,7 +89,8 @@ class GA:
         remaining_genes = parent1[cut2:] + parent1[:cut2]
 
         # remove genes already present in child's middle section
-        remaining_genes = [g for g in remaining_genes if g not in child]
+        child_set = set(child[cut1:cut2])
+        remaining_genes = [g for g in remaining_genes if g not in child_set]
 
         # target indices in the child to fill: start at cut2, continue to end, then wrap to start
         target_indices = list(range(cut2, n)) + list(range(0, cut2))

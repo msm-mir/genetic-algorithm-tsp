@@ -4,12 +4,13 @@ import time
 import matplotlib.pyplot as plt
 
 class GA:
-    def __init__(self, cities, pop_size, n_generations, mutation_rate):
+    def __init__(self, cities, pop_size, n_generations, mutation_rate, tourn_size):
         self.cities = cities
         self.n_cities = len(self.cities)
         self.pop_size = pop_size
         self.n_generations = n_generations
         self.mutation_rate = mutation_rate
+        self.tourn_size = tourn_size
 
         self.best_distance = float('inf')
         self.best_distance_history = []
@@ -59,11 +60,11 @@ class GA:
         return 1.0 / total_distance
 
     # tournament selection to generate a parent
-    def tournament_selection(self, fitness_scores, best_score_idx, tourn_size=3):
+    def tournament_selection(self, fitness_scores, best_score_idx):
         # remove the best score index from the selection pool
         available_idx = list(set(range(len(self.population))) - {best_score_idx})
         # randomly select chromosomes for the tournament
-        selected_tourn = random.sample(available_idx, tourn_size)
+        selected_tourn = random.sample(available_idx, self.tourn_size)
 
         # find the index of the tournament participant with the highest fitness score
         selected_idx = max(selected_tourn, key=lambda t: fitness_scores[t])
@@ -121,7 +122,7 @@ class GA:
     def fit(self):
         for g in range(self.n_generations):
             # store fitness score of each chromosome in the population
-            fitness_scores = [self.cal_fitness(self.dis_mx, p) for p in self.population]
+            fitness_scores = [self.cal_fitness(p) for p in self.population]
             # store best score to pass it directly to the next generation
             max_score = max(fitness_scores)
             best_score_idx = fitness_scores.index(max_score)
@@ -129,7 +130,7 @@ class GA:
 
             # for convergence plot
             current_best_dis = 1.0 / max_score
-            self.best_distance_history.append()
+            self.best_distance_history.append(current_best_dis)
 
             if current_best_dis < self.best_distance:
                 self.best_distance = current_best_dis
@@ -176,8 +177,8 @@ def generate_cities(n_cities):
 
 # visualize the convergence by plotting the best distance across generations
 def convergence_plot(history):
-    plt.figure(figsize=(8, 4))
-    plt.plot(history, color="violet", linewidth=2, label="Best Distance")
+    plt.figure(figsize=(8, 5))
+    plt.plot(history, color="hotpink", linewidth=1.75, label="Best Distance")
 
     plt.title("Genetic Algorithm Convergence for TSP", fontsize=14, fontweight="bold")
     plt.xlabel("Generation", fontsize=12)
@@ -194,23 +195,23 @@ def plot_best_route(cities, best_tour):
     x = [cities[tour_idx][0] for tour_idx in closed_tour]
     y = [cities[tour_idx][1] for tour_idx in closed_tour]
 
-    plt.figure(figsize=(8, 4))
+    plt.figure(figsize=(8, 5))
 
-    plt.plot(x, y, color="violet", linestyle="-", linewidth=2, marker="o")
+    plt.plot(x, y, color="hotpink", linestyle="-", linewidth=1.5, marker="o")
 
     plt.scatter(
         [c[0] for c in cities],
         [c[1] for c in cities],
-        color="black",
-        s=30,
-        zorder=5,
+        color="blueviolet",
+        s=20,
+        zorder=6,
     )
 
     plt.scatter(
         cities[best_tour[0]][0],
         cities[best_tour[0]][1],
-        color="green",
-        s=50,
+        color="limegreen",
+        s=30,
         label="Start City",
         zorder=6,
     )
@@ -226,13 +227,13 @@ def plot_best_route(cities, best_tour):
 # generate coordinate of the cities
 cities = generate_cities(n_cities=50)
 
-my_model = GA(cities, pop_size=500, n_generations=800, mutation_rate=0.05)
+my_model = GA(cities, pop_size=400, n_generations=600, mutation_rate=0.05, tourn_size=4)
 
 start_time = time.time()
 my_model.fit()
 exec_time = time.time() - start_time
 
-print(f'\n execution time: {exec_time:.3f}\n\n')
+print(f'\n execution time: {exec_time:.3f}\n')
 
 convergence_plot(my_model.best_distance_history)
 plot_best_route(cities, my_model.best_tour)

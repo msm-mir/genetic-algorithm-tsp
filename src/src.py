@@ -11,6 +11,8 @@ class GA:
         self.mutation_rate = mutation_rate
         self.best_distance_history = []
         
+        random.seed(42)
+
         # generate inputs (coordinate of the cities)
         self.cities = self.generate_cities()
 
@@ -129,7 +131,7 @@ class GA:
 
 # visualize the convergence by plotting the best distance across generations
 def convergence_plot(history):
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(8, 4))
     plt.plot(history, color="violet", linewidth=2, label="Best Distance")
 
     plt.title("Genetic Algorithm Convergence for TSP", fontsize=14, fontweight="bold")
@@ -147,7 +149,7 @@ def plot_best_route(cities, best_tour):
     x = [cities[tour_idx][0] for tour_idx in closed_tour]
     y = [cities[tour_idx][1] for tour_idx in closed_tour]
 
-    plt.figure(figsize=(8, 8))
+    plt.figure(figsize=(8, 4))
 
     plt.plot(x, y, color="violet", linestyle="-", linewidth=2, marker="o")
 
@@ -175,7 +177,6 @@ def plot_best_route(cities, best_tour):
     plt.legend()
     plt.show()
 
-random.seed(42)
 
 n_cities = 50
 pop_size = 500

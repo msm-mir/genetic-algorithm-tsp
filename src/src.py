@@ -82,35 +82,35 @@ class GA:
         # return the best parent chosen by tournament
         return self.population[selected_idx]
 
-# order crossover to generate the child
-def order_crossover(parent1, parent2):
-    n = len(parent1)
+    # order crossover to generate the child
+    def order_crossover(self, parent1, parent2):
+        n = len(parent1)
 
-    # generate two random cut points for the parents
-    cut1 = random.randint(0, n - 2)
-    cut2 = random.randint(cut1 + 1, n - 1)
+        # generate two random cut points for the parents
+        cut1 = random.randint(0, n - 2)
+        cut2 = random.randint(cut1 + 1, n - 1)
 
-    # fill the child with -1 initial values of parent size
-    child = [-1 for _ in range(n)]
+        # fill the child with -1 initial values of parent size
+        child = [-1 for _ in range(n)]
 
-    # copy the middle section of the parent to the child
-    child[cut1:cut2] = parent2[cut1:cut2]
+        # copy the middle section of the parent to the child
+        child[cut1:cut2] = parent2[cut1:cut2]
 
-    # collect the remaining genes from parent starting at cut2 and wrapping around
-    remaining_genes = parent1[cut2:] + parent1[:cut2]
+        # collect the remaining genes from parent starting at cut2 and wrapping around
+        remaining_genes = parent1[cut2:] + parent1[:cut2]
 
-    # remove genes already present in child's middle section
-    remaining_genes = [g for g in remaining_genes if g not in child]
+        # remove genes already present in child's middle section
+        remaining_genes = [g for g in remaining_genes if g not in child]
 
-    # target indices in the child to fill: start at cut2, continue to end, then wrap to start
-    target_indices = list(range(cut2, n)) + list(range(0, cut2))
+        # target indices in the child to fill: start at cut2, continue to end, then wrap to start
+        target_indices = list(range(cut2, n)) + list(range(0, cut2))
 
-    # fill the remaining indices in the child with the remaining genes
-    for i in range(len(remaining_genes)):
-        idx = target_indices[i]
-        child[idx] = remaining_genes[i]
-    
-    return child
+        # fill the remaining indices in the child with the remaining genes
+        for i in range(len(remaining_genes)):
+            idx = target_indices[i]
+            child[idx] = remaining_genes[i]
+        
+        return child
 
 # inversion mutation for a chromosome
 def mutation_inversion(chromosome):

@@ -30,6 +30,9 @@ The project utilizes libraries like `matplotlib` to provide clear graphical insi
 ```
 ├── src/
 │   └── src.py
+├── visualizations/
+│   |── best_found_route.png
+│   └── convergence_curve.png
 ├── .gitignore
 └── README.md
 ```
